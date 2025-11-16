@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "SmartCanteen.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 2; // ← CHANGEZ À 2 SI C'ÉTAIT 1
 
     // Table Users
     private static final String TABLE_USERS = "users";
@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NUMERO_ETUDIANT = "numero_etudiant";
     private static final String COLUMN_EMAIL = "email";
     private static final String COLUMN_PASSWORD = "mot_de_passe";
-    private static final String COLUMN_ROLE = "role";
+    private static final String COLUMN_ROLE = "role"; // ← NOUVEAU
     private static final String COLUMN_DATE_CREATION = "date_creation";
 
     public DatabaseHelper(Context context) {
@@ -41,7 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_NUMERO_ETUDIANT + " TEXT UNIQUE NOT NULL,"
                 + COLUMN_EMAIL + " TEXT NOT NULL,"
                 + COLUMN_PASSWORD + " TEXT NOT NULL,"
-                + COLUMN_ROLE + " TEXT NOT NULL,"
+                + COLUMN_ROLE + " TEXT NOT NULL," // ← AJOUTEZ CETTE LIGNE
                 + COLUMN_DATE_CREATION + " DATETIME DEFAULT CURRENT_TIMESTAMP"
                 + ")";
         db.execSQL(CREATE_USERS_TABLE);
@@ -85,10 +85,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_NUMERO_ETUDIANT, user.getNumeroEtudiant());
             values.put(COLUMN_EMAIL, user.getEmail());
             values.put(COLUMN_PASSWORD, hashPassword(user.getMotDePasse()));
-            values.put(COLUMN_ROLE, user.getRole());
+            values.put(COLUMN_ROLE, user.getRole()); // ← AJOUTEZ CETTE LIGNE
 
             long result = db.insert(TABLE_USERS, null, values);
 
+            // Logs pour déboguer
             Log.d("DATABASE", "Tentative d'insertion utilisateur : " + user.getNom() + " " + user.getPrenom());
             Log.d("DATABASE", "Rôle : " + user.getRole());
             Log.d("DATABASE", "Résultat de l'insertion : " + result);
@@ -134,4 +135,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return exists;
     }
+
+    // Vérifier email + mot de passe
+    public boolean checkUserCredentials(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String hashedPassword = hashPassword(password);
+
+        Cursor cursor = db.query(TABLE_USERS,
+                new String[]{COLUMN_ID, COLUMN_ROLE},
+                COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
+                new String[]{email, hashedPassword},
+                null, null, null);
+
+        boolean isValid = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return isValid;
+    }
+
 }
