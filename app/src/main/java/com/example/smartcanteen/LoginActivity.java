@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartcanteen.database.DatabaseHelper;
+import com.example.smartcanteen.models.User;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
@@ -75,18 +76,29 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Vérifier dans la base de données
-        boolean isValid = databaseHelper.checkUserCredentials(email, password);
+        // Vérifier dans la base de données et récupérer l'utilisateur
+        User user = databaseHelper.loginUserByEmail(email, password);
 
-        if (isValid) {
-            Toast.makeText(this, "Connexion réussie !", Toast.LENGTH_SHORT).show();
+        if (user != null) {
+            // Connexion réussie
+            Toast.makeText(this, "✅ Bienvenue " + user.getPrenom() + " !", Toast.LENGTH_LONG).show();
 
-            // TODO: Rediriger vers la page principale selon le rôle
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
+            // Rediriger selon le rôle
+            if (user.getRole().equals("personnel")) {
+                // Interface Personnel (à créer par vos amis)
+                Toast.makeText(this, "Interface Personnel (à créer)", Toast.LENGTH_SHORT).show();
+            } else {
+                // Rediriger vers l'interface Étudiant
+                Intent intent = new Intent(this, EtudiantDashboardActivity.class);
+                intent.putExtra("USER_NAME", user.getPrenom());
+                intent.putExtra("USER_ID", user.getId());
+                startActivity(intent);
+            }
+
             finish();
         } else {
-            Toast.makeText(this, "Email ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "❌ Email ou mot de passe incorrect", Toast.LENGTH_LONG).show();
+            editTextPassword.setText("");
         }
     }
 }

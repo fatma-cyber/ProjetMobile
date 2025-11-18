@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "SmartCanteen.db";
-    private static final int DATABASE_VERSION = 2; // ← CHANGEZ À 2 SI C'ÉTAIT 1
+    private static final int DATABASE_VERSION = 3; // ← CHANGEZ À 2 SI C'ÉTAIT 1
 
     // Table Users
     private static final String TABLE_USERS = "users";
@@ -34,6 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Table users (existante)
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NOM + " TEXT NOT NULL,"
@@ -41,16 +42,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_NUMERO_ETUDIANT + " TEXT UNIQUE NOT NULL,"
                 + COLUMN_EMAIL + " TEXT NOT NULL,"
                 + COLUMN_PASSWORD + " TEXT NOT NULL,"
-                + COLUMN_ROLE + " TEXT NOT NULL," // ← AJOUTEZ CETTE LIGNE
+                + COLUMN_ROLE + " TEXT NOT NULL,"
                 + COLUMN_DATE_CREATION + " DATETIME DEFAULT CURRENT_TIMESTAMP"
                 + ")";
         db.execSQL(CREATE_USERS_TABLE);
         Log.d("DATABASE", "Table users créée avec succès");
+
+        // ======= NOUVELLES TABLES À AJOUTER ICI =======
+
+        // Table menus
+        String CREATE_MENUS_TABLE = "CREATE TABLE menus ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "nom_plat TEXT NOT NULL,"
+                + "description TEXT,"
+                + "prix REAL NOT NULL,"
+                + "disponible INTEGER DEFAULT 1,"
+                + "date_ajout DATETIME DEFAULT CURRENT_TIMESTAMP"
+                + ")";
+        db.execSQL(CREATE_MENUS_TABLE);
+        Log.d("DATABASE", "Table menus créée");
+
+        // Table reservations
+        String CREATE_RESERVATIONS_TABLE = "CREATE TABLE reservations ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "user_id INTEGER NOT NULL,"
+                + "menu_id INTEGER NOT NULL,"
+                + "date_reservation DATETIME DEFAULT CURRENT_TIMESTAMP,"
+                + "statut TEXT DEFAULT 'en_attente',"
+                + "FOREIGN KEY (user_id) REFERENCES users(id),"
+                + "FOREIGN KEY (menu_id) REFERENCES menus(id)"
+                + ")";
+        db.execSQL(CREATE_RESERVATIONS_TABLE);
+        Log.d("DATABASE", "Table reservations créée");
+
+        // Table avis
+        String CREATE_AVIS_TABLE = "CREATE TABLE avis ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "user_id INTEGER NOT NULL,"
+                + "menu_id INTEGER NOT NULL,"
+                + "note INTEGER NOT NULL CHECK(note >= 1 AND note <= 5),"
+                + "commentaire TEXT,"
+                + "date_avis DATETIME DEFAULT CURRENT_TIMESTAMP,"
+                + "FOREIGN KEY (user_id) REFERENCES users(id),"
+                + "FOREIGN KEY (menu_id) REFERENCES menus(id)"
+                + ")";
+        db.execSQL(CREATE_AVIS_TABLE);
+        Log.d("DATABASE", "Table avis créée");
+
+        // Insérer des menus par défaut (pour avoir des données de test)
+        insertDefaultMenus(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d("DATABASE", "Mise à jour de la base de données de version " + oldVersion + " à " + newVersion);
+        db.execSQL("DROP TABLE IF EXISTS avis");
+        db.execSQL("DROP TABLE IF EXISTS reservations");
+        db.execSQL("DROP TABLE IF EXISTS menus");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         onCreate(db);
     }
@@ -152,5 +200,65 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return isValid;
     }
+    // Insérer des menus par défaut pour les tests
+    private void insertDefaultMenus(SQLiteDatabase db) {
+        String[] menus = {
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Couscous', 'Couscous traditionnel avec légumes et viande', 35.0, 1)",
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Pizza Margherita', 'Pizza classique sauce tomate et mozzarella', 25.0, 1)",
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Salade César', 'Salade fraîche avec poulet grillé', 20.0, 1)",
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Pâtes Carbonara', 'Pâtes à la crème et lardons', 28.0, 1)",
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Tajine Poulet', 'Tajine marocain aux olives et citron', 32.0, 1)"
+        };
 
+        for (String sql : menus) {
+            db.execSQL(sql);
+        }
+        Log.d("DATABASE", "5 menus par défaut insérés");
+    }
+    // Vérifier email + mot de passe ET retourner l'utilisateur complet
+    public User loginUserByEmail(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        User user = null;
+
+        try {
+            // Hasher le mot de passe entré
+            String hashedPassword = hashPassword(password);
+
+            // Requête pour trouver l'utilisateur
+            Cursor cursor = db.query(
+                    TABLE_USERS,
+                    null, // Toutes les colonnes
+                    COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
+                    new String[]{email, hashedPassword},
+                    null, null, null
+            );
+
+            if (cursor.moveToFirst()) {
+                // Utilisateur trouvé - créer l'objet User
+                user = new User(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOM)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRENOM)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NUMERO_ETUDIANT)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                        "", // Ne pas retourner le mot de passe
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ROLE))
+                );
+
+                Log.d("DATABASE", "Connexion réussie : " + user.getPrenom() + " (Rôle: " + user.getRole() + ")");
+            } else {
+                Log.d("DATABASE", "Échec connexion pour : " + email);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Log.e("DATABASE", "Erreur connexion : " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return user; // null si pas trouvé
+    }
 }
+
