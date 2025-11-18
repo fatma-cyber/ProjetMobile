@@ -152,5 +152,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return isValid;
     }
+    // Ajoute cette méthode dans DatabaseHelper
+    public User getUserByEmailAndPassword(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String hashedPassword = hashPassword(password);
+
+        Cursor cursor = db.query(TABLE_USERS,
+                new String[]{COLUMN_ID, COLUMN_NOM, COLUMN_PRENOM, COLUMN_NUMERO_ETUDIANT,
+                        COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_ROLE},
+                COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
+                new String[]{email, hashedPassword},
+                null, null, null);
+
+        User user = null;
+
+        if (cursor != null && cursor.moveToFirst()) {
+
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
+            String nom = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOM));
+            String prenom = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRENOM));
+            String numeroEtudiant = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NUMERO_ETUDIANT));
+            String mail = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL));
+            String role = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ROLE));
+
+            // ⚠️ On ne renvoie pas hashedPassword dans l'objet (inutile)
+            user = new User(id, nom, prenom, numeroEtudiant, mail, role);
+
+            cursor.close();
+        }
+
+        db.close();
+        return user;
+    }
+
+
+
 
 }

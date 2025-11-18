@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartcanteen.database.DatabaseHelper;
+import com.example.smartcanteen.models.User;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
@@ -56,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        // Validations
+        // ===== Validations =====
         if (email.isEmpty()) {
             editTextEmail.setError("L'email est requis");
             editTextEmail.requestFocus();
@@ -75,18 +76,48 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Vérifier dans la base de données
-        boolean isValid = databaseHelper.checkUserCredentials(email, password);
+        // ===== Récupérer l'utilisateur depuis SQLite =====
+        User user = databaseHelper.getUserByEmailAndPassword(email, password);
 
-        if (isValid) {
+        if (user != null) {
             Toast.makeText(this, "Connexion réussie !", Toast.LENGTH_SHORT).show();
 
-            // TODO: Rediriger vers la page principale selon le rôle
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            // Sauvegarder la session
+            saveUserSession(user);
+
+            // ===== Redirection selon le rôle =====
+            String role = user.getRole();
+            Intent intent;
+
+            if ("personnel".equalsIgnoreCase(role) || "admin".equalsIgnoreCase(role)) {
+                intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
+            } else {
+                intent = new Intent(LoginActivity.this, HomeStudentActivity.class);
+            }
+
             startActivity(intent);
             finish();
+
         } else {
             Toast.makeText(this, "Email ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
         }
     }
+
+    // ===== Sauvegarde de session dans SharedPreferences =====
+    private void saveUserSession(User user) {
+        android.content.SharedPreferences prefs =
+                getSharedPreferences("smart_canteen_prefs", MODE_PRIVATE);
+
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putInt("user_id", user.getId());
+        editor.putString("user_role", user.getRole());
+        editor.putString("user_nom", user.getNom());
+        editor.putString("user_prenom", user.getPrenom());
+        editor.putString("user_email", user.getEmail());
+        editor.putBoolean("is_logged_in", true);
+
+        editor.apply();
+    }
+
 }
