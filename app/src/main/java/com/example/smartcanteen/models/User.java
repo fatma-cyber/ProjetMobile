@@ -9,18 +9,7 @@ public class User {
     private String motDePasse;
     private String role;
 
-    // Constructeur complet (avec ID)
-    public User(int id, String nom, String prenom) {
-        this.id = id;
-        this.nom = nom;
-        this.prenom = prenom;
-        this.numeroEtudiant = numeroEtudiant;
-        this.email = email;
-        this.motDePasse = motDePasse;
-        this.role = role;
-    }
-
-    // --- Constructeur utilisé à l'inscription ---
+    // Constructeur SANS id (pour l'inscription)
     public User(String nom, String prenom, String numeroEtudiant, String email, String motDePasse, String role) {
         this.nom = nom;
         this.prenom = prenom;
@@ -30,15 +19,17 @@ public class User {
         this.role = role;
     }
 
-    // --- Constructeur utilisé au login (sans mot de passe) ---
-    public User(int id, String nom, String prenom, String numeroEtudiant, String email, String role) {
+    // Constructeur AVEC id (pour récupérer depuis la base de données)
+    public User(int id, String nom, String prenom, String numeroEtudiant, String email, String motDePasse, String role) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.numeroEtudiant = numeroEtudiant;
         this.email = email;
+        this.motDePasse = motDePasse;
         this.role = role;
     }
+
     // Getters et Setters
     public int getId() {
         return id;

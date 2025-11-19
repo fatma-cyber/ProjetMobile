@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_mon_profil"
+        android:title="👤 Mon Profil"/>
+
+    <item
+        android:id="@+id/menu_mes_reservations"
+        android:title="📅 Mes Réservations"/>
+
+    <item
+        android:id="@+id/menu_parametres"
+        android:title="⚙️ Paramètres"/>
+
+    <item
+        android:id="@+id/menu_deconnexion"
+        android:title="🚪 Déconnexion"/>
+
+</menu>
