@@ -7,15 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.smartcanteen.models.Menu;
 import com.example.smartcanteen.models.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "SmartCanteen.db";
-    private static final int DATABASE_VERSION = 3; // ← CHANGEZ À 2 SI C'ÉTAIT 1
+    private static final int DATABASE_VERSION = 3;
 
     // Table Users
     private static final String TABLE_USERS = "users";
@@ -25,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NUMERO_ETUDIANT = "numero_etudiant";
     private static final String COLUMN_EMAIL = "email";
     private static final String COLUMN_PASSWORD = "mot_de_passe";
-    private static final String COLUMN_ROLE = "role"; // ← NOUVEAU
+    private static final String COLUMN_ROLE = "role";
     private static final String COLUMN_DATE_CREATION = "date_creation";
 
     public DatabaseHelper(Context context) {
@@ -34,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Table users (existante)
+        // Table users
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NOM + " TEXT NOT NULL,"
@@ -46,9 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_DATE_CREATION + " DATETIME DEFAULT CURRENT_TIMESTAMP"
                 + ")";
         db.execSQL(CREATE_USERS_TABLE);
-        Log.d("DATABASE", "Table users créée avec succès");
-
-        // ======= NOUVELLES TABLES À AJOUTER ICI =======
 
         // Table menus
         String CREATE_MENUS_TABLE = "CREATE TABLE menus ("
@@ -60,7 +60,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "date_ajout DATETIME DEFAULT CURRENT_TIMESTAMP"
                 + ")";
         db.execSQL(CREATE_MENUS_TABLE);
-        Log.d("DATABASE", "Table menus créée");
 
         // Table reservations
         String CREATE_RESERVATIONS_TABLE = "CREATE TABLE reservations ("
@@ -73,7 +72,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY (menu_id) REFERENCES menus(id)"
                 + ")";
         db.execSQL(CREATE_RESERVATIONS_TABLE);
-        Log.d("DATABASE", "Table reservations créée");
 
         // Table avis
         String CREATE_AVIS_TABLE = "CREATE TABLE avis ("
@@ -87,15 +85,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY (menu_id) REFERENCES menus(id)"
                 + ")";
         db.execSQL(CREATE_AVIS_TABLE);
-        Log.d("DATABASE", "Table avis créée");
 
-        // Insérer des menus par défaut (pour avoir des données de test)
+        // Insérer des menus par défaut
         insertDefaultMenus(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d("DATABASE", "Mise à jour de la base de données de version " + oldVersion + " à " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS avis");
         db.execSQL("DROP TABLE IF EXISTS reservations");
         db.execSQL("DROP TABLE IF EXISTS menus");
@@ -103,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Méthode pour hasher le mot de passe
+    // Hash mot de passe
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -121,144 +117,183 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Ajouter un utilisateur
+    // =================== USERS ===================
     public boolean addUser(User user) {
-        SQLiteDatabase db = null;
-        try {
-            db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-
-            values.put(COLUMN_NOM, user.getNom());
-            values.put(COLUMN_PRENOM, user.getPrenom());
-            values.put(COLUMN_NUMERO_ETUDIANT, user.getNumeroEtudiant());
-            values.put(COLUMN_EMAIL, user.getEmail());
-            values.put(COLUMN_PASSWORD, hashPassword(user.getMotDePasse()));
-            values.put(COLUMN_ROLE, user.getRole()); // ← AJOUTEZ CETTE LIGNE
-
-            long result = db.insert(TABLE_USERS, null, values);
-
-            // Logs pour déboguer
-            Log.d("DATABASE", "Tentative d'insertion utilisateur : " + user.getNom() + " " + user.getPrenom());
-            Log.d("DATABASE", "Rôle : " + user.getRole());
-            Log.d("DATABASE", "Résultat de l'insertion : " + result);
-
-            return result != -1;
-        } catch (Exception e) {
-            Log.e("DATABASE", "Erreur lors de l'insertion : " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (db != null) {
-                db.close();
-            }
-        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NOM, user.getNom());
+        values.put(COLUMN_PRENOM, user.getPrenom());
+        values.put(COLUMN_NUMERO_ETUDIANT, user.getNumeroEtudiant());
+        values.put(COLUMN_EMAIL, user.getEmail());
+        values.put(COLUMN_PASSWORD, hashPassword(user.getMotDePasse()));
+        values.put(COLUMN_ROLE, user.getRole());
+        long result = db.insert(TABLE_USERS, null, values);
+        db.close();
+        return result != -1;
     }
 
-    // Vérifier si le numéro étudiant existe déjà
     public boolean checkNumeroEtudiantExists(String numeroEtudiant) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS,
-                new String[]{COLUMN_ID},
-                COLUMN_NUMERO_ETUDIANT + "=?",
-                new String[]{numeroEtudiant},
-                null, null, null);
-
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID},
+                COLUMN_NUMERO_ETUDIANT + "=?", new String[]{numeroEtudiant}, null, null, null);
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         db.close();
         return exists;
     }
 
-    // Vérifier si l'email existe déjà
     public boolean checkEmailExists(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS,
-                new String[]{COLUMN_ID},
-                COLUMN_EMAIL + "=?",
-                new String[]{email},
-                null, null, null);
-
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID},
+                COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         db.close();
         return exists;
     }
 
-    // Vérifier email + mot de passe
-    public boolean checkUserCredentials(String email, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String hashedPassword = hashPassword(password);
-
-        Cursor cursor = db.query(TABLE_USERS,
-                new String[]{COLUMN_ID, COLUMN_ROLE},
-                COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
-                new String[]{email, hashedPassword},
-                null, null, null);
-
-        boolean isValid = cursor.getCount() > 0;
-        cursor.close();
-        db.close();
-        return isValid;
-    }
-    // Insérer des menus par défaut pour les tests
-    private void insertDefaultMenus(SQLiteDatabase db) {
-        String[] menus = {
-                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Couscous', 'Couscous traditionnel avec légumes et viande', 35.0, 1)",
-                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Pizza Margherita', 'Pizza classique sauce tomate et mozzarella', 25.0, 1)",
-                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Salade César', 'Salade fraîche avec poulet grillé', 20.0, 1)",
-                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Pâtes Carbonara', 'Pâtes à la crème et lardons', 28.0, 1)",
-                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Tajine Poulet', 'Tajine marocain aux olives et citron', 32.0, 1)"
-        };
-
-        for (String sql : menus) {
-            db.execSQL(sql);
-        }
-        Log.d("DATABASE", "5 menus par défaut insérés");
-    }
-    // Vérifier email + mot de passe ET retourner l'utilisateur complet
     public User loginUserByEmail(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         User user = null;
-
-        try {
-            // Hasher le mot de passe entré
-            String hashedPassword = hashPassword(password);
-
-            // Requête pour trouver l'utilisateur
-            Cursor cursor = db.query(
-                    TABLE_USERS,
-                    null, // Toutes les colonnes
-                    COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
-                    new String[]{email, hashedPassword},
-                    null, null, null
+        String hashedPassword = hashPassword(password);
+        Cursor cursor = db.query(TABLE_USERS, null,
+                COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
+                new String[]{email, hashedPassword}, null, null, null);
+        if (cursor.moveToFirst()) {
+            user = new User(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOM)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRENOM)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NUMERO_ETUDIANT)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                    "",
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ROLE))
             );
-
-            if (cursor.moveToFirst()) {
-                // Utilisateur trouvé - créer l'objet User
-                user = new User(
-                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOM)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRENOM)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NUMERO_ETUDIANT)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
-                        "", // Ne pas retourner le mot de passe
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ROLE))
-                );
-
-                Log.d("DATABASE", "Connexion réussie : " + user.getPrenom() + " (Rôle: " + user.getRole() + ")");
-            } else {
-                Log.d("DATABASE", "Échec connexion pour : " + email);
-            }
-
-            cursor.close();
-        } catch (Exception e) {
-            Log.e("DATABASE", "Erreur connexion : " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            db.close();
         }
+        cursor.close();
+        db.close();
+        return user;
+    }
 
-        return user; // null si pas trouvé
+    // =================== MENUS ===================
+    private void insertDefaultMenus(SQLiteDatabase db) {
+        String[] menus = {
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Couscous', 'Couscous traditionnel', 35.0, 1)",
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Pizza Margherita', 'Pizza classique', 25.0, 1)",
+                "INSERT INTO menus (nom_plat, description, prix, disponible) VALUES ('Salade César', 'Salade fraîche', 20.0, 1)"
+        };
+        for (String sql : menus) db.execSQL(sql);
+    }
+
+    public List<Menu> getAllMenus() {
+        List<Menu> menus = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM menus WHERE disponible = 1", null);
+        if (cursor.moveToFirst()) {
+            do {
+                menus.add(new Menu(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("nom_plat")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("prix")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("disponible")) == 1,
+                        cursor.getString(cursor.getColumnIndexOrThrow("date_ajout"))
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return menus;
+    }
+
+    public List<Menu> getAllMenusForPersonnel() {
+        List<Menu> menus = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM menus", null);
+        if (cursor.moveToFirst()) {
+            do {
+                menus.add(new Menu(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("nom_plat")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("prix")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("disponible")) == 1,
+                        cursor.getString(cursor.getColumnIndexOrThrow("date_ajout"))
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return menus;
+    }
+
+    public boolean addMenu(String nomPlat, String description, double prix) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nom_plat", nomPlat);
+        values.put("description", description);
+        values.put("prix", prix);
+        values.put("disponible", 1);
+        long result = db.insert("menus", null, values);
+        db.close();
+        return result != -1;
+    }
+
+    public boolean updateMenu(int id, String nomPlat, String description, double prix) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nom_plat", nomPlat);
+        values.put("description", description);
+        values.put("prix", prix);
+        int result = db.update("menus", values, "id=?", new String[]{String.valueOf(id)});
+        db.close();
+        return result > 0;
+    }
+
+    public boolean deleteMenu(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete("menus", "id=?", new String[]{String.valueOf(id)});
+        db.close();
+        return result > 0;
+    }
+
+    public boolean setMenuAvailability(int id, boolean disponible) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("disponible", disponible ? 1 : 0);
+        int result = db.update("menus", values, "id=?", new String[]{String.valueOf(id)});
+        db.close();
+        return result > 0;
+    }
+
+    // =================== RESERVATIONS ===================
+    public boolean addReservation(int userId, int menuId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("user_id", userId);
+        values.put("menu_id", menuId);
+        long result = db.insert("reservations", null, values);
+        db.close();
+        return result != -1;
+    }
+
+    public boolean cancelReservation(int reservationId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete("reservations", "id=?", new String[]{String.valueOf(reservationId)});
+        db.close();
+        return result > 0;
+    }
+
+    // =================== AVIS ===================
+    public boolean addAvis(int userId, int menuId, int note, String commentaire) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("user_id", userId);
+        values.put("menu_id", menuId);
+        values.put("note", note);
+        values.put("commentaire", commentaire);
+        long result = db.insert("avis", null, values);
+        db.close();
+        return result != -1;
     }
 }
-

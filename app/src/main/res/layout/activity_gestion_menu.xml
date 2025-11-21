@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8F5E9"
+    android:padding="16dp">
+
+    <!-- Titre -->
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gestion des Menus"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#1B5E20"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:background="#C8E6C9"
+        android:elevation="6dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Layout pour les boutons -->
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:layout_marginTop="12dp">
+
+        <Button
+            android:id="@+id/buttonAddMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ajouter un plat"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#236B26"
+            android:padding="14dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="4dp"/>
+
+        <Button
+            android:id="@+id/buttonRetourDashboard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Retour"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#E91219"
+            android:padding="14dp"
+            android:layout_marginStart="8dp"
+            android:elevation="4dp"/>
+    </LinearLayout>
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMenus"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/txtTitle"
+        android:layout_above="@id/layoutButtons"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical"/>
+</RelativeLayout>

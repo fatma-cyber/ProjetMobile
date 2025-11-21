@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    card_view:cardCornerRadius="16dp"
+    card_view:cardElevation="6dp"
+    android:background="#E8F5E9">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nom du plat -->
+        <TextView
+            android:id="@+id/textViewNomPlat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom du plat"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#1B5E20"/>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/textViewDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description du plat"
+            android:textSize="14sp"
+            android:textColor="#2E7D32"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Prix -->
+        <TextView
+            android:id="@+id/textViewPrix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prix : 10 DT"
+            android:textSize="16sp"
+            android:textColor="#388E3C"
+            android:layout_marginTop="6dp"/>
+
+        <!-- Séparateur -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#A5D6A7"
+            android:layout_marginVertical="8dp"/>
+
+        <!-- Boutons et Switch -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Modifier -->
+            <Button
+                android:id="@+id/btnEditMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Modifier"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#43A047"
+                android:elevation="4dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Supprimer -->
+            <Button
+                android:id="@+id/btnDeleteMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Supprimer"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#E53935"
+                android:layout_marginStart="8dp"
+                android:elevation="4dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Disponible -->
+            <Switch
+                android:id="@+id/switchAvailable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Disponible"
+                android:textColor="#1B5E20"
+                android:layout_marginStart="8dp"
+                android:thumbTint="#43A047"
+                android:trackTint="#A5D6A7"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

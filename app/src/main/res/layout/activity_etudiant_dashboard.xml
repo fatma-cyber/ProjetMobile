@@ -49,7 +49,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_more"
             app:tint="#FFFFFF"
-        android:contentDescription="Menu"/>
+            android:contentDescription="Menu"/>
 
     </LinearLayout>
 

@@ -85,17 +85,20 @@ public class LoginActivity extends AppCompatActivity {
 
             // Rediriger selon le rôle
             if (user.getRole().equals("personnel")) {
-                // Interface Personnel (à créer par vos amis)
-                Toast.makeText(this, "Interface Personnel (à créer)", Toast.LENGTH_SHORT).show();
-            } else {
-                // Rediriger vers l'interface Étudiant
+                // Redirection vers le dashboard du personnel
+                Intent intent = new Intent(this, DashboardPersonnelActivity.class);
+                intent.putExtra("USER_NAME", user.getPrenom());
+                intent.putExtra("USER_ID", user.getId());
+                startActivity(intent);
+            } else if (user.getRole().equals("etudiant")) {
+                // Redirection vers le dashboard de l'étudiant
                 Intent intent = new Intent(this, EtudiantDashboardActivity.class);
                 intent.putExtra("USER_NAME", user.getPrenom());
                 intent.putExtra("USER_ID", user.getId());
                 startActivity(intent);
             }
 
-            finish();
+            finish(); // ferme LoginActivity pour ne pas revenir en arrière
         } else {
             Toast.makeText(this, "❌ Email ou mot de passe incorrect", Toast.LENGTH_LONG).show();
             editTextPassword.setText("");

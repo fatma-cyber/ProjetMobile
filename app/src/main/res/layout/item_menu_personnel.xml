@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FFFFFF"
+    android:layout_marginBottom="12dp"
+    android:elevation="4dp"
+    android:clipToPadding="false">
+
+    <!-- Nom du plat -->
+    <TextView
+        android:id="@+id/txtMenuName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nom du plat"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#212121"/>
+
+    <!-- Description du plat -->
+    <TextView
+        android:id="@+id/txtMenuDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description du plat"
+        android:textSize="14sp"
+        android:textColor="#616161"
+        android:layout_marginTop="4dp"/>
+
+    <!-- Prix du plat -->
+    <TextView
+        android:id="@+id/txtMenuPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prix"
+        android:textSize="16sp"
+        android:textColor="#FF5722"
+        android:layout_marginTop="6dp"/>
+
+    <!-- Boutons et switch -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btnEditMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Modifier"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4CAF50"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnDeleteMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Supprimer"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#F44336"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:layout_marginEnd="8dp"/>
+
+        <Switch
+            android:id="@+id/switchAvailable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disponible"
+            android:textColor="#212121"/>
+    </LinearLayout>
+</LinearLayout>

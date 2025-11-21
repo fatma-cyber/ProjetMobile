@@ -12,8 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartCanteen"
         tools:targetApi="31">
-
-        <!-- LoginActivity comme écran de démarrage -->
+        <activity
+            android:name=".DashboardPersonnelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GestionMenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MenuDuJourActivity"
+            android:exported="false" /> <!-- LoginActivity comme écran de démarrage -->
         <activity
             android:name=".HomeStudentActivity"
             android:exported="false" />
@@ -25,25 +32,19 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- RegisterActivity -->
+        </activity> <!-- RegisterActivity -->
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" />
-
-        <!-- ⚠️ AJOUTEZ CETTE ACTIVITY ICI ⚠️ -->
+            android:exported="false" /> <!-- ⚠️ AJOUTEZ CETTE ACTIVITY ICI ⚠️ -->
         <activity
             android:name=".EtudiantDashboardActivity"
-            android:exported="false" />
-
-        <!-- MainActivity (si vous l'utilisez) -->
+            android:exported="false" /> <!-- MainActivity (si vous l'utilisez) -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="16dp"
+    android:padding="16dp"
+    android:background="#E8F5E9">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajouter un plat"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#1B5E20"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/editMenuName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nom du plat"
+            android:padding="12dp"
+            android:backgroundTint="#A5D6A7"
+            android:textColor="#212121"
+            android:layout_marginBottom="12dp"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/editMenuDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:padding="12dp"
+            android:backgroundTint="#A5D6A7"
+            android:textColor="#212121"
+            android:layout_marginBottom="12dp"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/editMenuPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Prix"
+            android:padding="12dp"
+            android:backgroundTint="#A5D6A7"
+            android:textColor="#212121"
+            android:layout_marginBottom="16dp"
+            android:inputType="numberDecimal"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Annuler"
+                android:layout_marginEnd="12dp"
+                android:backgroundTint="#C62828"
+                android:textColor="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/btnConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Valider"
+                android:backgroundTint="#2E7D32"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

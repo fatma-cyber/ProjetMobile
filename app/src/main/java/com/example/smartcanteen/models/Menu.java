@@ -19,7 +19,7 @@ public class Menu {
     }
 
     // Constructeur sans ID
-    public Menu(String nomPlat, String description, double prix) {
+    public Menu(int id, String nomPlat, String description, double prix) {
         this.nomPlat = nomPlat;
         this.description = description;
         this.prix = prix;
