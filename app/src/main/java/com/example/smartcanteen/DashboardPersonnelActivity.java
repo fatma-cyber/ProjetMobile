@@ -2,10 +2,13 @@ package com.example.smartcanteen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,7 +16,7 @@ public class DashboardPersonnelActivity extends AppCompatActivity {
 
     private TextView txtWelcome;
     private LinearLayout cardGestionMenu, cardReservations, cardAvis;
-    private Button buttonLogout;
+    private ImageButton buttonMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +28,7 @@ public class DashboardPersonnelActivity extends AppCompatActivity {
         cardGestionMenu = findViewById(R.id.cardGestionMenu);
         cardReservations = findViewById(R.id.cardReservations);
         cardAvis = findViewById(R.id.cardAvis);
-        buttonLogout = findViewById(R.id.buttonLogout);
+        buttonMenu = findViewById(R.id.buttonMenu);
 
         // Récupération du nom utilisateur depuis l'Intent
         String userName = getIntent().getStringExtra("USER_NAME");
@@ -48,18 +51,55 @@ public class DashboardPersonnelActivity extends AppCompatActivity {
             // startActivity(new Intent(this, GestionAvisActivity.class));
         });
 
-        // Déconnexion
-        buttonLogout.setOnClickListener(v -> {
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
+        // 🔥 Menu déroulant (3 points)
+        buttonMenu.setOnClickListener(v -> showPopupMenu(v));
 
         // Appliquer animation dynamique aux cards
         addCardAnimation(cardGestionMenu);
         addCardAnimation(cardReservations);
         addCardAnimation(cardAvis);
+    }
+
+    /**
+     * 📌 Affiche le menu déroulant
+     */
+    private void showPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_dashboard_personnel, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.menu_mon_profil) {
+                    // TODO: Implémenter profil personnel
+                    return true;
+                }
+                else if (id == R.id.menu_parametres) {
+                    // TODO: Implémenter paramètres
+                    return true;
+                }
+                else if (id == R.id.menu_deconnexion) {
+                    deconnexion();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        popupMenu.show();
+    }
+
+    /**
+     * 📌 Déconnexion
+     */
+    private void deconnexion() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     /**

@@ -8,7 +8,15 @@ public class Menu {
     private boolean disponible;
     private String dateAjout;
 
-    // Constructeur complet
+    //  Sans ID (pour création)
+    public Menu(String nomPlat, String description, double prix) {
+        this.nomPlat = nomPlat;
+        this.description = description;
+        this.prix = prix;
+        this.disponible = true;
+    }
+
+    //  Avec ID (lecture BD)
     public Menu(int id, String nomPlat, String description, double prix, boolean disponible, String dateAjout) {
         this.id = id;
         this.nomPlat = nomPlat;
@@ -16,14 +24,6 @@ public class Menu {
         this.prix = prix;
         this.disponible = disponible;
         this.dateAjout = dateAjout;
-    }
-
-    // Constructeur sans ID
-    public Menu(int id, String nomPlat, String description, double prix) {
-        this.nomPlat = nomPlat;
-        this.description = description;
-        this.prix = prix;
-        this.disponible = true;
     }
 
     // Getters et Setters

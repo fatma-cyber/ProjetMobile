@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F4F6F6"
@@ -10,27 +11,49 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- TITRE -->
-        <TextView
-            android:id="@+id/txtWelcome"
-            android:layout_width="wrap_content"
+        <!-- HEADER avec menu -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bienvenue !"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#1B5E20"
-            android:paddingBottom="6dp"
-            android:layout_gravity="center"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tableau de bord"
-            android:textColor="#4CAF50"
-            android:textSize="16sp"
-            android:layout_marginBottom="30dp"
-            android:layout_gravity="center"/>
+            <!-- TITRE -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/txtWelcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bienvenue !"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="#1B5E20"
+                    android:paddingBottom="6dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tableau de bord"
+                    android:textColor="#4CAF50"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <!-- Bouton Menu (3 points) -->
+            <ImageButton
+                android:id="@+id/buttonMenu"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_more"
+                app:tint="#1B5E20"
+                android:contentDescription="Menu"/>
+        </LinearLayout>
 
         <!-- ==== CARD: Gestion Menu ==== -->
         <LinearLayout
@@ -44,23 +67,16 @@
             android:background="#FFFFFF"
             android:foreground="?attr/selectableItemBackground"
             android:elevation="10dp"
-            android:clipToOutline="true"
-            android:scaleX="1"
-            android:scaleY="1"
-            android:translationZ="4dp"
-            android:backgroundTint="#FFFFFF"
-            android:layout_marginTop="10dp">
+            android:clipToOutline="true">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gestion des Menus"
+                android:text="📋 Gestion des Menus"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:textColor="#2E7D32"/>
         </LinearLayout>
-
-
 
         <!-- ==== CARD: Réservations ==== -->
         <LinearLayout
@@ -79,13 +95,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Réservations"
+                android:text="📅 Réservations"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:textColor="#2E7D32"/>
         </LinearLayout>
-
-
 
         <!-- ==== CARD: Avis ==== -->
         <LinearLayout
@@ -104,25 +118,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Avis"
+                android:text="⭐ Avis"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:textColor="#2E7D32"/>
         </LinearLayout>
 
-
-
-        <!-- Bouton Déconnexion -->
-        <Button
-            android:id="@+id/buttonLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Déconnexion"
-            android:textSize="17sp"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#ED0D2E"
-            android:padding="14dp"
-            android:elevation="8dp"
-            android:layout_marginTop="20dp"/>
     </LinearLayout>
 </ScrollView>

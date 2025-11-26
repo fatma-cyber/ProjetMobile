@@ -14,7 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartcanteen.adapters.MenuEtudiantAdapter;
 import com.example.smartcanteen.database.DatabaseHelper;
+import com.example.smartcanteen.models.Menu;
+
+import java.util.List;
 
 public class EtudiantDashboardActivity extends AppCompatActivity {
 
@@ -46,7 +50,8 @@ public class EtudiantDashboardActivity extends AppCompatActivity {
 
         recyclerViewMenus.setLayoutManager(new LinearLayoutManager(this));
 
-        Toast.makeText(this, "Chargement des menus...", Toast.LENGTH_SHORT).show();
+        // 🔥 CHARGER LES MENUS DISPONIBLES
+        loadMenus();
 
         // Bouton Mes Réservations
         buttonMesReservations.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +68,21 @@ public class EtudiantDashboardActivity extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
+    }
+
+    /**
+     * 📌 Charge les menus disponibles depuis la base de données
+     */
+    private void loadMenus() {
+        List<Menu> menus = databaseHelper.getAllMenus(); // Récupère UNIQUEMENT les menus disponibles
+
+        if (menus.isEmpty()) {
+            Toast.makeText(this, "Aucun menu disponible pour le moment", Toast.LENGTH_SHORT).show();
+        } else {
+            MenuEtudiantAdapter adapter = new MenuEtudiantAdapter(menus, userId, databaseHelper);
+            recyclerViewMenus.setAdapter(adapter);
+            Toast.makeText(this, menus.size() + " plat(s) disponible(s)", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showPopupMenu(View view) {
