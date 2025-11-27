@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.smartcanteen.models.Menu;
+import com.example.smartcanteen.models.Reservation;
 import com.example.smartcanteen.models.User;
 
 import java.security.MessageDigest;
@@ -295,5 +296,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long result = db.insert("avis", null, values);
         db.close();
         return result != -1;
+    }
+    // =================== RESERVATIONS (ÉTUDIANT) ===================
+
+    /**
+     * Récupère toutes les réservations d'un étudiant avec les infos du menu
+     */
+    public List<Reservation> getReservationsByUser(int userId) {
+        List<Reservation> reservations = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // 🔍 Requête SQL avec JOIN pour récupérer les infos du menu
+        String query = "SELECT r.id, r.user_id, r.menu_id, r.date_reservation, r.statut, " +
+                "m.nom_plat, m.description, m.prix " +
+                "FROM reservations r " +
+                "INNER JOIN menus m ON r.menu_id = m.id " +
+                "WHERE r.user_id = ? " +
+                "ORDER BY r.date_reservation DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Reservation reservation = new Reservation(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("user_id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("menu_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("date_reservation")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("statut")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("nom_plat")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("prix"))
+                );
+                reservations.add(reservation);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return reservations;
     }
 }

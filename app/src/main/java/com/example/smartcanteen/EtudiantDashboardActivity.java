@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,7 @@ public class EtudiantDashboardActivity extends AppCompatActivity {
     private String userName;
     private int userId;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,32 +44,29 @@ public class EtudiantDashboardActivity extends AppCompatActivity {
         userId = getIntent().getIntExtra("USER_ID", -1);
 
         textViewWelcome = findViewById(R.id.textViewWelcome);
-        recyclerViewMenus = findViewById(R.id.recyclerViewMenus);
         buttonMesReservations = findViewById(R.id.buttonMesReservations);
         buttonMenu = findViewById(R.id.buttonMenu);
+        CardView cardVoirMenu = findViewById(R.id.cardVoirMenu);  // ✅ AJOUT
 
         textViewWelcome.setText("Bonjour, " + userName + " !");
 
-        recyclerViewMenus.setLayoutManager(new LinearLayoutManager(this));
-
-        // 🔥 CHARGER LES MENUS DISPONIBLES
-        loadMenus();
+        // ✅ CLIC SUR LA CARTE "VOIR LE MENU"
+        cardVoirMenu.setOnClickListener(v -> {
+            Intent intent = new Intent(EtudiantDashboardActivity.this, MenuCompletActivity.class);
+            intent.putExtra("USER_ID", userId);
+            startActivity(intent);
+        });
 
         // Bouton Mes Réservations
-        buttonMesReservations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(EtudiantDashboardActivity.this, "Mes réservations (à implémenter)", Toast.LENGTH_SHORT).show();
-            }
+        buttonMesReservations.setOnClickListener(v -> {
+            Intent intent = new Intent(EtudiantDashboardActivity.this, MesReservationsActivity.class);
+            intent.putExtra("USER_ID", userId);
+            intent.putExtra("USER_NAME", userName);
+            startActivity(intent);
         });
 
-        // Menu dropdown (3 points)
-        buttonMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopupMenu(v);
-            }
-        });
+        // Menu dropdown
+        buttonMenu.setOnClickListener(v -> showPopupMenu(v));
     }
 
     /**
@@ -99,7 +98,11 @@ public class EtudiantDashboardActivity extends AppCompatActivity {
                     return true;
                 }
                 else if (id == R.id.menu_mes_reservations) {
-                    Toast.makeText(EtudiantDashboardActivity.this, "Mes Réservations", Toast.LENGTH_SHORT).show();
+                    // ✅ NAVIGATION VERS MesReservationsActivity
+                    Intent intent = new Intent(EtudiantDashboardActivity.this, MesReservationsActivity.class);
+                    intent.putExtra("USER_ID", userId);
+                    intent.putExtra("USER_NAME", userName);
+                    startActivity(intent);
                     return true;
                 }
                 else if (id == R.id.menu_parametres) {

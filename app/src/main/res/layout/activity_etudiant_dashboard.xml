@@ -53,38 +53,60 @@
 
     </LinearLayout>
 
-    <!-- Menu du jour -->
+    <!-- ✅ CARTE CLIQUABLE "VOIR LE MENU" -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardVoirMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp">
+        app:cardElevation="8dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp"
+            android:gravity="center">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📋 Menu du Jour"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
+                android:text="🍽️"
+                android:textSize="48sp"
                 android:layout_marginBottom="12dp"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewMenus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Menu du Jour"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Découvrez nos plats disponibles"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="👉 Cliquez pour voir le menu complet"
+                android:textSize="12sp"
+                android:textColor="#4CAF50"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Bouton Mes Réservations (maintenant seul) -->
+    <!-- Bouton Mes Réservations -->
     <Button
         android:id="@+id/buttonMesReservations"
         android:layout_width="match_parent"
