@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.smartcanteen.models.Avis;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -286,6 +287,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // =================== AVIS ===================
+
     public boolean addAvis(int userId, int menuId, int note, String commentaire) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -297,6 +299,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return result != -1;
     }
+
+    public List<Avis> getAllAvis() {
+        List<Avis> avisList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM avis ORDER BY date_avis DESC", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Avis avis = new Avis();
+                avis.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                avis.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
+                avis.setMenuId(cursor.getInt(cursor.getColumnIndexOrThrow("menu_id")));
+                avis.setNote(cursor.getInt(cursor.getColumnIndexOrThrow("note")));
+                avis.setCommentaire(cursor.getString(cursor.getColumnIndexOrThrow("commentaire")));
+                avis.setDateAvis(cursor.getString(cursor.getColumnIndexOrThrow("date_avis")));
+                avisList.add(avis);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return avisList;
+    }
+
+    public boolean updateAvis(int id, int note, String commentaire) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("note", note);
+        values.put("commentaire", commentaire);
+
+        int rows = db.update("avis", values, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rows > 0;
+    }
+
+    public boolean deleteAvis(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete("avis", "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rows > 0;
+    }
+
     // =================== RESERVATIONS (ÉTUDIANT) ===================
 
     /**
