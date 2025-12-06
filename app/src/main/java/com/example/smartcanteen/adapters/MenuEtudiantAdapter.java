@@ -1,5 +1,6 @@
 package com.example.smartcanteen.adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartcanteen.AvisActivity;
 import com.example.smartcanteen.R;
 import com.example.smartcanteen.database.DatabaseHelper;
 import com.example.smartcanteen.models.Menu;
@@ -52,6 +54,13 @@ public class MenuEtudiantAdapter extends RecyclerView.Adapter<MenuEtudiantAdapte
                 Toast.makeText(v.getContext(), "❌ Erreur lors de la réservation", Toast.LENGTH_SHORT).show();
             }
         });
+        // ✅ BOUTON VOIR LES AVIS
+        holder.btnVoirAvis.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), AvisActivity.class);
+            intent.putExtra("USER_ID", userId);
+            intent.putExtra("MENU_ID", menu.getId());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -61,7 +70,7 @@ public class MenuEtudiantAdapter extends RecyclerView.Adapter<MenuEtudiantAdapte
 
     static class MenuViewHolder extends RecyclerView.ViewHolder {
         TextView txtName, txtDesc, txtPrice;
-        Button btnReserver;
+        Button btnReserver, btnVoirAvis; // ✅ AJOUT
 
         public MenuViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +78,7 @@ public class MenuEtudiantAdapter extends RecyclerView.Adapter<MenuEtudiantAdapte
             txtDesc = itemView.findViewById(R.id.txtMenuDescription);
             txtPrice = itemView.findViewById(R.id.txtMenuPrice);
             btnReserver = itemView.findViewById(R.id.btnReserver);
+            btnVoirAvis = itemView.findViewById(R.id.btnVoirAvis); // ✅ AJOUT
         }
     }
 }

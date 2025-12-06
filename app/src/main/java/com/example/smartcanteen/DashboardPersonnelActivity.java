@@ -49,8 +49,17 @@ public class DashboardPersonnelActivity extends AppCompatActivity {
 
 
         // TODO: redirection vers Gestion Avis
+        // ✅ Gestion Avis avec USER_ID
         cardAvis.setOnClickListener(v -> {
             Intent intent = new Intent(DashboardPersonnelActivity.this, AvisActivity.class);
+
+            // ✅ RÉCUPÉRER USER_ID depuis l'intent
+            int userId = getIntent().getIntExtra("USER_ID", -1);
+            intent.putExtra("USER_ID", userId);
+
+            // ⚠️ Le personnel voit TOUS les avis, donc pas besoin de MENU_ID
+            intent.putExtra("MENU_ID", 0); // 0 = voir tous les avis
+
             startActivity(intent);
         });
 

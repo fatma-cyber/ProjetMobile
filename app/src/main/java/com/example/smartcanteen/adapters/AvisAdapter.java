@@ -20,10 +20,17 @@ public class AvisAdapter extends RecyclerView.Adapter<AvisAdapter.AvisViewHolder
 
     private List<Avis> avisList;
     private DatabaseHelper dbHelper;
+    private OnEditClickListener editListener; // ✅ Interface pour modifier
 
-    public AvisAdapter(List<Avis> avisList, DatabaseHelper dbHelper) {
+    // ✅ Interface pour gérer le clic "Modifier"
+    public interface OnEditClickListener {
+        void onEditClick(Avis avis);
+    }
+
+    public AvisAdapter(List<Avis> avisList, DatabaseHelper dbHelper, OnEditClickListener editListener) {
         this.avisList = avisList;
         this.dbHelper = dbHelper;
+        this.editListener = editListener;
     }
 
     @NonNull
@@ -37,25 +44,27 @@ public class AvisAdapter extends RecyclerView.Adapter<AvisAdapter.AvisViewHolder
     public void onBindViewHolder(@NonNull AvisViewHolder holder, int position) {
         Avis avis = avisList.get(position);
 
-        holder.txtNote.setText("Note : " + avis.getNote());
-        holder.txtCommentaire.setText("Commentaire : " + avis.getCommentaire());
-        holder.txtDate.setText(avis.getDateAvis());
+        holder.txtNote.setText("⭐ Note : " + avis.getNote() + "/5");
+        holder.txtCommentaire.setText("💬 " + (avis.getCommentaire().isEmpty() ? "Pas de commentaire" : avis.getCommentaire()));
+        holder.txtDate.setText("📅 " + (avis.getDateAvis() != null ? avis.getDateAvis() : ""));
 
-        // Bouton Modifier
+        // ✅ BOUTON MODIFIER
         holder.btnEdit.setOnClickListener(v -> {
-            // Ici tu peux ajouter la logique pour modifier l'avis (dialog ou nouvelle activity)
-            Toast.makeText(v.getContext(), "Modifier l'avis " + avis.getId(), Toast.LENGTH_SHORT).show();
+            if (editListener != null) {
+                editListener.onEditClick(avis);
+            }
         });
 
-        // Bouton Supprimer
+        // ✅ BOUTON SUPPRIMER
         holder.btnDelete.setOnClickListener(v -> {
             boolean success = dbHelper.deleteAvis(avis.getId());
             if (success) {
                 avisList.remove(position);
                 notifyItemRemoved(position);
-                Toast.makeText(v.getContext(), "Avis supprimé", Toast.LENGTH_SHORT).show();
+                notifyItemRangeChanged(position, getItemCount());
+                Toast.makeText(v.getContext(), "🗑️ Avis supprimé", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(v.getContext(), "Erreur lors de la suppression", Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), "❌ Erreur suppression", Toast.LENGTH_SHORT).show();
             }
         });
     }

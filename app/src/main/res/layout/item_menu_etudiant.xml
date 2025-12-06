@@ -55,6 +55,16 @@
             android:backgroundTint="#4CAF50"
             android:layout_marginTop="12dp"
             android:padding="12dp"/>
+        <!-- Bouton Voir les avis -->
+        <Button
+            android:id="@+id/btnVoirAvis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⭐ Voir les avis"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF9800"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

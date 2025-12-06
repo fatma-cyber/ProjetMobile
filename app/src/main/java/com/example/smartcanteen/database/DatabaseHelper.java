@@ -287,17 +287,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // =================== AVIS ===================
-
     public boolean addAvis(int userId, int menuId, int note, String commentaire) {
+        // ✅ VALIDATION userId et menuId
+        if (userId <= 0 || menuId <= 0) {
+            Log.e("DatabaseHelper", "userId ou menuId invalide");
+            return false;
+        }
+
+        // ✅ VALIDATION NOTE (1-5)
+        if (note < 1 || note > 5) {
+            Log.e("DatabaseHelper", "Note hors limites (1-5)");
+            return false;
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("user_id", userId);
         values.put("menu_id", menuId);
         values.put("note", note);
         values.put("commentaire", commentaire);
-        long result = db.insert("avis", null, values);
-        db.close();
-        return result != -1;
+
+        try {
+            long result = db.insertOrThrow("avis", null, values);
+            db.close();
+            return result != -1;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Erreur addAvis : " + e.getMessage());
+            db.close();
+            return false;
+        }
     }
 
     public List<Avis> getAllAvis() {
