@@ -43,8 +43,10 @@ public class DashboardPersonnelActivity extends AppCompatActivity {
 
         // TODO: redirection vers Gestion Réservations
         cardReservations.setOnClickListener(v -> {
-            // startActivity(new Intent(this, GestionReservationsActivity.class));
+            Intent intent = new Intent(DashboardPersonnelActivity.this, GestionReservationsActivity.class);
+            startActivity(intent);
         });
+
 
         // TODO: redirection vers Gestion Avis
         cardAvis.setOnClickListener(v -> {

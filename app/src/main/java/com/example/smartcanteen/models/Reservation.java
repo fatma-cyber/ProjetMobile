@@ -11,6 +11,20 @@ public class Reservation {
     private String nomPlat;
     private String description;
     private double prix;
+    private String nomEtudiant;
+    private String prenomEtudiant;
+    private String numeroEtudiant;
+
+    // Getters et setters
+    public String getNomEtudiant() { return nomEtudiant; }
+    public void setNomEtudiant(String nomEtudiant) { this.nomEtudiant = nomEtudiant; }
+
+    public String getPrenomEtudiant() { return prenomEtudiant; }
+    public void setPrenomEtudiant(String prenomEtudiant) { this.prenomEtudiant = prenomEtudiant; }
+
+    public String getNumeroEtudiant() { return numeroEtudiant; }
+    public void setNumeroEtudiant(String numeroEtudiant) { this.numeroEtudiant = numeroEtudiant; }
+
 
     // ════════════════════════════════════════════════════════════════
     // CONSTRUCTEUR complet

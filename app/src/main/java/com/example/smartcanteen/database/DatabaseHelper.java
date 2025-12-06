@@ -380,4 +380,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return reservations;
     }
+
+    // Récupérer toutes les réservations avec les infos de l'étudiant et du menu
+    public List<Reservation> getAllReservations() {
+        List<Reservation> reservations = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT r.id, r.user_id, r.menu_id, r.date_reservation, r.statut, " +
+                "m.nom_plat, m.description, m.prix, " +
+                "u.nom, u.prenom, u.numero_etudiant " +
+                "FROM reservations r " +
+                "INNER JOIN menus m ON r.menu_id = m.id " +
+                "INNER JOIN users u ON r.user_id = u.id " +
+                "ORDER BY r.date_reservation DESC";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Reservation reservation = new Reservation(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("user_id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("menu_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("date_reservation")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("statut")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("nom_plat")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("prix"))
+                );
+                // Ajouter infos étudiant
+                reservation.setNomEtudiant(cursor.getString(cursor.getColumnIndexOrThrow("nom")));
+                reservation.setPrenomEtudiant(cursor.getString(cursor.getColumnIndexOrThrow("prenom")));
+                reservation.setNumeroEtudiant(cursor.getString(cursor.getColumnIndexOrThrow("numero_etudiant")));
+
+                reservations.add(reservation);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return reservations;
+    }
+
 }
