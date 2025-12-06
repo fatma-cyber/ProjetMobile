@@ -50,7 +50,8 @@ public class DashboardPersonnelActivity extends AppCompatActivity {
 
         // TODO: redirection vers Gestion Avis
         cardAvis.setOnClickListener(v -> {
-            // startActivity(new Intent(this, GestionAvisActivity.class));
+            Intent intent = new Intent(DashboardPersonnelActivity.this, AvisActivity.class);
+            startActivity(intent);
         });
 
         // 🔥 Menu déroulant (3 points)
