@@ -439,5 +439,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return reservations;
     }
+    // Mettre à jour le statut d'une réservation
+    public boolean updateReservationStatus(int reservationId, String statut) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("statut", statut);
+        int rows = db.update("reservations", values, "id = ?", new String[]{String.valueOf(reservationId)});
+        db.close();
+        return rows > 0;
+    }
 
 }

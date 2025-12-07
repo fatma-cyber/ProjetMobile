@@ -2,7 +2,6 @@ package com.example.smartcanteen;
 
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,26 +24,17 @@ public class GestionReservationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestion_reservations);
 
-        // Initialisation du RecyclerView
         recyclerView = findViewById(R.id.recyclerViewReservationsPersonnel);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialisation de la base de données
         dbHelper = new DatabaseHelper(this);
 
-        // Charger les réservations depuis la base
         loadReservations();
 
-        // Bouton retour vers Dashboard Personnel
         Button buttonBack = findViewById(R.id.buttonBack);
-        buttonBack.setOnClickListener(v -> finish()); // Ferme l'activité et revient
-
-
+        buttonBack.setOnClickListener(v -> finish());
     }
 
-    /**
-     * Charge toutes les réservations et les affiche dans le RecyclerView
-     */
     private void loadReservations() {
         List<Reservation> reservations = dbHelper.getAllReservations();
 
@@ -53,6 +43,22 @@ public class GestionReservationsActivity extends AppCompatActivity {
         } else {
             ReservationPersonnelAdapter adapter = new ReservationPersonnelAdapter(reservations);
             recyclerView.setAdapter(adapter);
+
+            adapter.setOnReservationActionListener(new ReservationPersonnelAdapter.OnReservationActionListener() {
+                @Override
+                public void onValidate(Reservation reservation) {
+                    dbHelper.updateReservationStatus(reservation.getId(), "validee");
+                    loadReservations();
+                    Toast.makeText(GestionReservationsActivity.this, "Réservation validée", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onRefuse(Reservation reservation) {
+                    dbHelper.updateReservationStatus(reservation.getId(), "refusee");
+                    loadReservations();
+                    Toast.makeText(GestionReservationsActivity.this, "Réservation refusée", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

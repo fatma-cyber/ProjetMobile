@@ -16,14 +16,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Ligne principale: icône + nom menu -->
+        <!-- Ligne principale: nom menu -->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
-
-
 
             <TextView
                 android:id="@+id/txtNomMenu"
@@ -51,7 +49,7 @@
             android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center">
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/txtDate"
@@ -60,7 +58,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <!-- Badge de statut -->
             <TextView
                 android:id="@+id/txtStatut"
                 android:textSize="14sp"
@@ -68,8 +65,35 @@
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
                 android:background="@drawable/bg_statut"
+                android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!-- Boutons Valider / Refuser -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnValider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Valider"
+                android:backgroundTint="@color/green_500"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnRefuser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Refuser"
+                android:backgroundTint="@color/red_500"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

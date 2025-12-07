@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,18 @@ public class ReservationPersonnelAdapter extends RecyclerView.Adapter<Reservatio
         this.reservations = reservations;
     }
 
+    // Listener pour les actions valider/refuser
+    public interface OnReservationActionListener {
+        void onValidate(Reservation reservation);
+        void onRefuse(Reservation reservation);
+    }
+
+    private OnReservationActionListener listener;
+
+    public void setOnReservationActionListener(OnReservationActionListener listener) {
+        this.listener = listener;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,8 +54,6 @@ public class ReservationPersonnelAdapter extends RecyclerView.Adapter<Reservatio
         holder.txtEtudiant.setText(r.getNomEtudiant() + " " + r.getPrenomEtudiant() + " (" + r.getNumeroEtudiant() + ")");
         holder.txtDate.setText(formatDate(r.getDateReservation()));
         holder.txtStatut.setText(r.getStatut());
-
-
 
         int color;
         switch (r.getStatut()) {
@@ -66,8 +77,16 @@ public class ReservationPersonnelAdapter extends RecyclerView.Adapter<Reservatio
             }
             return false;
         });
-        }
 
+        // Actions des boutons
+        holder.btnValider.setOnClickListener(v -> {
+            if (listener != null) listener.onValidate(r);
+        });
+
+        holder.btnRefuser.setOnClickListener(v -> {
+            if (listener != null) listener.onRefuse(r);
+        });
+    }
 
     @Override
     public int getItemCount() {
@@ -76,6 +95,7 @@ public class ReservationPersonnelAdapter extends RecyclerView.Adapter<Reservatio
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNomMenu, txtEtudiant, txtDate, txtStatut;
+        Button btnValider, btnRefuser;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +103,8 @@ public class ReservationPersonnelAdapter extends RecyclerView.Adapter<Reservatio
             txtEtudiant = itemView.findViewById(R.id.txtEtudiant);
             txtDate = itemView.findViewById(R.id.txtDate);
             txtStatut = itemView.findViewById(R.id.txtStatut);
+            btnValider = itemView.findViewById(R.id.btnValider);
+            btnRefuser = itemView.findViewById(R.id.btnRefuser);
         }
     }
 
@@ -96,7 +118,4 @@ public class ReservationPersonnelAdapter extends RecyclerView.Adapter<Reservatio
             return dateStr;
         }
     }
-
-
-
 }
